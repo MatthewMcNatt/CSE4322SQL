@@ -1,5 +1,11 @@
 #code for sql engine goes here
+from dotenv import load_dotenv
+load_dotenv()
+import os
+import openai
 
+API_KEY=os.getenv('API_KEY')
+print(API_KEY)
 """
 Create schema takes in a list of strings,
 each representing an entity that schema will represent.
