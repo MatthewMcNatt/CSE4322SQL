@@ -108,7 +108,7 @@ def generate_query(schema, NLQueryDescription):
     response = chat.choices[0].message.content 
      
     
-
+    print("\n\nPROMPT\n\n"+prompt+"\n\n")
     return(response)
 
 
