@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 import openai
-import asyncio
 
 API_KEY=os.getenv('API_KEY')
 print('KEY LOADED: '+API_KEY+'\n')
@@ -24,7 +23,7 @@ and a natural language description of all fields to be
 created. No fields not in the description will be generated
 except an ID field if model cannot identify a suitable key.
 """
-async def create_schema(entities, DBname):
+def create_schema(entities, DBname):
     messages = [ {"role": "system", "content":  
               "You are an NL model that only generates sql commands and scripts. "+
               "You will recieve a Natural language description of a database including "+
@@ -40,7 +39,7 @@ async def create_schema(entities, DBname):
     messages.append( 
             {"role": "user", "content": prompt}, 
         )
-    chat = await openai.ChatCompletion.create( 
+    chat = openai.ChatCompletion.create( 
             model="gpt-3.5-turbo", messages=messages 
         ) 
     response = chat.choices[0].message.content 
@@ -139,8 +138,3 @@ NLQueryDescription = "All the phone numbers starting with 817."
 #r = assess_SQLCommands(badSqlite)
 #r = generate_query(schema, NLQueryDescription)
 #print(r)
-
-async def async_hello_world(num):
-    await asyncio.sleep(num)  # Simulate a delay of 2 seconds
-    print("Hello, World!")
-    return 4
