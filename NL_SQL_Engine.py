@@ -40,7 +40,7 @@ async def create_schema(entities, DBname):
     messages.append( 
             {"role": "user", "content": prompt}, 
         )
-    chat = await openai.ChatCompletion.create( 
+    chat = openai.ChatCompletion.create( 
             model="gpt-3.5-turbo", messages=messages 
         ) 
     response = chat.choices[0].message.content 
@@ -134,12 +134,11 @@ CREATE TABLE "PhoneBookEntry" (
 );
 """
 NLQueryDescription = "All the phone numbers starting with 817."
-
 #r = create_schema(entities, 'Hospital DB')
+#print(r)
 #r = assess_SQLCommands(badSqlite)
 #r = generate_query(schema, NLQueryDescription)
 #print(r)
-
 async def async_hello_world(num):
     await asyncio.sleep(num)  # Simulate a delay of 2 seconds
     print("Hello, World!")
