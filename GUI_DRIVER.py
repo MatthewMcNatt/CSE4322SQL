@@ -96,19 +96,19 @@ def run_async_task(loading_dialog, progressbar, async_task, ID):
     global CREATE_SCHEMA_RESULTS
     global ASSESS_SCHEMA_RESULTS
     global CREATE_QUERY_RESULTS
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
     
     if(ID == CREATE_SCHEMA_ID):
-        CREATE_SCHEMA_RESULTS = loop.run_until_complete(async_task())
+        CREATE_SCHEMA_RESULTS = async_task()
         #add any state changes to UI here for your use case. 
         #If you want things to execute AFTER its stored it must be here. 
-        #FOR EXAMPLE: label5.config(text=CREATE_SCHEMA_RESULTS) updates label 5 in the testing tab
+        #FOR EXAMPLE: 
+        label5.config(text=CREATE_SCHEMA_RESULTS) #updates label 5 in the testing tab
+        print(CREATE_SCHEMA_RESULTS)
     if(ID == CREATE_QUERY_ID):
-        CREATE_QUERY_RESULTS = loop.run_until_complete(async_task())
+        CREATE_QUERY_RESULTS = async_task()
         #add any state changes to UI here for your use case
     if(ID == ASSESS_SCHEMA_ID):
-        ASSESS_SCHEMA_RESULTS = loop.run_until_complete(async_task())
+        ASSESS_SCHEMA_RESULTS = async_task()
         #add any state changes to UI here for your use case
     # Close the loading dialog when the task is complete
     #label5.config(text=CREATE_SCHEMA_RESULTS)
