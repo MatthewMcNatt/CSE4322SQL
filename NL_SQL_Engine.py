@@ -1,4 +1,5 @@
 #code for sql engine goes here
+#Updated for loading bar
 from dotenv import load_dotenv
 load_dotenv()
 import os
