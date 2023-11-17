@@ -15,7 +15,6 @@ class entity():
         self.name = field1
         self.description = field2
 
-
 """
 Create schema takes in a list of strings,
 each representing an entity that schema will represent.
@@ -52,7 +51,7 @@ def create_schema(entities, DBname):
 Assess schema takes in an set of sql commands
 that would generate a schema for a database in string form.
 It returns a natural language description of 
-any erros the model detects.  
+any errors the model detects.  
 """
 def assess_SQLCommands(input):
     messages = [ {"role": "system", "content":  

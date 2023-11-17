@@ -4,6 +4,7 @@ import time
 import tkinter as tk
 from tkinter import ttk
 from NL_SQL_Engine import * 
+from entity import *
 
 CREATE_SCHEMA_RESULTS="EMPTY"
 CREATE_QUERY_RESULTS="EMPTY"
@@ -39,15 +40,155 @@ notebook.add(assessSchemaFrame, text="Assess Schema")
 notebook.add(generateQueryFrame, text="Generate Query")
 notebook.add(testFrame, text="Testing REMOVE LATER")
 
-
 # Pack the notebook to make it visible
 notebook.pack(fill='both', expand=True)
 
 
-"""TODO: add code for the create schema use case """
-label1 = ttk.Label(createSchemaFrame, text="ADD GUI ELEMENTS HERE")
-label1.pack(padx=10, pady=10)
-#create_schema("test")
+'''
+--------------------------------------------------------------
+-------------------CREATE SCHEMA ~ VARIABLES------------------
+--------------------------------------------------------------
+'''
+
+#list of all entities thus far appended
+entities = []
+DBname = None
+response = None
+
+'''
+------------------------------------------------------------
+-------------------CREATE SCHEMA ~ METHODS------------------
+------------------------------------------------------------
+'''
+
+#create an entity
+def add_entity():
+    #extract information from entry boxes
+    entity_name = entity_name_entry.get()
+    entity_description = entity_description_entry.get()
+
+    #add the entity to the list as string
+    user_defined_entity = Entity(entity_name, entity_description)
+    entities.append(user_defined_entity)
+    
+    for e in entities:
+        print(e.toString() + "\n")
+
+    update_entity_display()
+
+#empty contents of the list to start over
+def restart():
+    global entities
+    entities = []
+    display_entities.delete(1.0, tk.END)
+    display_schema.delete(1.0, tk.END)
+
+#list all entities in entity display box
+def update_entity_display():
+    # Clear the existing content in the Text widget
+    display_entities.delete(1.0, tk.END)
+
+    # Iterate through entities and insert them into the Text widget
+    for index, e in enumerate(entities, start=1):
+        entity_info = f"{index}. {e.name}\n   {e.description}\n\n"
+        display_entities.insert(tk.END, entity_info)
+
+#update display schema to include ChatGPT response
+def update_schema_display():
+    # Clear the existing content in the Text widget
+    display_schema.delete(1.0, tk.END)
+
+    display_schema.insert(tk.END, response)
+
+#create schema draft via SQL_Engine
+def generate():
+    
+    #access/update dbname global variable
+    global DBname
+    DBname = database_name_entry.get()
+
+    #generate queries via sql engine
+    global response
+    response = create_schema(entities, DBname)
+
+    #update display
+    update_schema_display()
+
+def export():
+    # Open a file in write mode (creates the file if it doesn't exist)
+    global DBname
+    filename = DBname + ".sql"
+    with open(filename, 'w') as file:
+        # Print a string to the file
+        print(response, file=file)
+
+#user input database attributes: name & entities
+
+'''
+------------------------------------------------------------
+---------------CREATE SCHEMA ~ DEFINE WIDGETS---------------
+------------------------------------------------------------
+'''
+
+#Labels
+entity_name_label = ttk.Label(createSchemaFrame, text="Entity Name:")
+entity_description_label = ttk.Label(createSchemaFrame, text="Entity Description:")
+database_name_label = ttk.Label(createSchemaFrame, text="Database Name:")
+entity_display_label = ttk.Label(createSchemaFrame, text="Current Entities:")
+schema_display_label = ttk.Label(createSchemaFrame, text="Current Schema:")
+
+#Entry boxes
+entity_name_entry = ttk.Entry(createSchemaFrame, width=20)
+entity_description_entry = ttk.Entry(createSchemaFrame, width=40)
+database_name_entry = ttk.Entry(createSchemaFrame, width=20)
+
+#Buttons
+add_entity_button = ttk.Button(createSchemaFrame, text="Add new entity", command=add_entity)
+restart_button = ttk.Button(createSchemaFrame, text="Restart", command=restart)
+generate_button = ttk.Button(createSchemaFrame, text="Generate", command=generate)
+export_button = ttk.Button(createSchemaFrame, text="Export (.sql)", command=export)
+
+#Text Boxes
+display_entities = tk.Text(createSchemaFrame, height=70, width=55, wrap=tk.WORD)
+display_schema = tk.Text(createSchemaFrame, height=70, width=55, wrap=tk.WORD)
+
+#Scroll Bars
+entities_scrollbar = ttk.Scrollbar(createSchemaFrame, command=display_entities.yview)
+display_entities.config(yscrollcommand=entities_scrollbar.set)
+schema_scrollbar = ttk.Scrollbar(createSchemaFrame, command=display_schema.yview)
+display_schema.config(yscrollcommand=schema_scrollbar.set)
+
+'''
+---------------------------------------------------------
+---------------CREATE SCHEMA ~ GRID LAYOUT---------------
+---------------------------------------------------------
+'''
+
+#Show Labels
+entity_name_label.grid(row=0, column=0, padx=50, pady=0, sticky="w")
+entity_description_label.grid(row=2, column=0, padx=50, pady=0, sticky="w")
+database_name_label.grid(row=6, column=0, padx=50, pady=0, sticky="w")
+entity_display_label.grid(row=0, column=1, padx=5, pady=0, sticky="w")
+schema_display_label.grid(row=0, column=3, padx=5, pady=0, sticky="w")
+
+#Show Entry Boxes
+entity_name_entry.grid(row=1, column=0, padx=50, pady=0, sticky="w")
+entity_description_entry.grid(row=3, column=0, padx=50, pady=0, sticky="w")
+database_name_entry.grid(row=7, column=0, padx=50, pady=0, sticky="w")
+
+#Show Buttons
+add_entity_button.grid(row=4, column=0, padx=50, pady=0, sticky="w")
+restart_button.grid(row=5, column=0, padx=50, pady=0, sticky="w")
+generate_button.grid(row=8, column=0, padx=50, pady=0, sticky="w")
+export_button.grid(row=9, column=0, padx=50, pady=0, sticky="w")
+
+#Display Text Boxes
+display_entities.grid(row=1, column=1, rowspan=11, padx=10, pady=10, sticky="nsew")
+display_schema.grid(row=1, column=3, rowspan=11, padx=10, pady=10, sticky="nsew")
+
+#Display Scroll Bars
+entities_scrollbar.grid(row=1, column=2, rowspan=11, pady=10, sticky="ns")
+schema_scrollbar.grid(row=1, column=4, rowspan=11, pady=10, sticky="ns")
 
 """TODO: add code for the assess schema use case """
 label2 = ttk.Label(assessSchemaFrame, text="ADD GUI ELEMENTS HERE")
