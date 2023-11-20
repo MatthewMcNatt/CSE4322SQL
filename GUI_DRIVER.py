@@ -1,6 +1,5 @@
 #GUI CODE
 import threading
-import sqlite3
 import time
 import tkinter as tk
 from tkinter import ttk, filedialog
@@ -310,23 +309,28 @@ notebook.add(assessCommandsFrame, text="Assess SQLite Commands")
 ---------ASSESS SQL COMMANDS ~ METHODS & WIDGETS------------
 ------------------------------------------------------------
 '''
-
+openai.api_key = "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"
 def assess_SqlCommands(sql_commands):
     try:
-        # Attempt to execute the SQL commands to check for syntax errors
-        conn = sqlite3.connect(":memory:")
-        cursor = conn.cursor()
-        cursor.executescript(sql_commands)
-        conn.commit()
-        conn.close()
+        # Prepare the prompt for ChatGPT input
+        prompt = f"Assess the following SQL commands:\n{sql_commands}"
 
-        # If execution succeeds, return a success message
-        return "No syntax errors found. Code appears to be valid."
+        # Call the OpenAI GPT-3 API
+        response = openai.Completion.create(
+            model="davinci-002",
+            prompt=prompt,
+            max_tokens=200
+        )
 
-    except sqlite3.Error as e:
-        # If there's an error, return a natural language description of the error
-        error_message = str(e)
-        return f"Error: {error_message}"
+        # Extract the generated text from the API response
+        generated_text = response['choices'][0]['text']
+
+        # Return the generated description
+        return generated_text
+
+    except Exception as e:
+        # Handle API errors
+        return f"An error occurred while assessing the SQL commands: {str(e)}"
     
 def assess_commands():
     # Get the SQL commands from the text box
