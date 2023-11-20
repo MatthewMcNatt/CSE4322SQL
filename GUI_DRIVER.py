@@ -1,5 +1,6 @@
 #GUI CODE
 import threading
+import sqlite3
 import time
 import tkinter as tk
 from tkinter import ttk, filedialog
@@ -300,5 +301,75 @@ query_description_entry.pack(padx=10, pady=10)
 generate_query_button.pack(padx=10, pady=10)
 display_generated_query.pack(padx=10, pady=10)
 
+# Create a new frame for the Assess SQLite Commands tab
+assessCommandsFrame = ttk.Frame(notebook)
+notebook.add(assessCommandsFrame, text="Assess SQLite Commands")
 
+'''
+------------------------------------------------------------
+---------ASSESS SQL COMMANDS ~ METHODS & WIDGETS------------
+------------------------------------------------------------
+'''
+
+def assess_SqlCommands(sql_commands):
+    try:
+        # Attempt to execute the SQL commands to check for syntax errors
+        conn = sqlite3.connect(":memory:")
+        cursor = conn.cursor()
+        cursor.executescript(sql_commands)
+        conn.commit()
+        conn.close()
+
+        # If execution succeeds, return a success message
+        return "No syntax errors found. Code appears to be valid."
+
+    except sqlite3.Error as e:
+        # If there's an error, return a natural language description of the error
+        error_message = str(e)
+        return f"Error: {error_message}"
+    
+def assess_commands():
+    # Get the SQL commands from the text box
+    sql_commands = sql_commands_text_box.get("1.0", tk.END).strip()
+
+    # Check if the SQL commands are empty
+    if not sql_commands:
+        assessment_result = "Please enter valid SQL commands."
+    else:
+        # Call the assess_SqlCommands function
+        assessment_result = assess_SqlCommands(sql_commands)
+
+    # Update the display with the assessment result
+    display_assessment_result.delete(1.0, tk.END)
+    display_assessment_result.insert(tk.END, assessment_result)
+
+# Label and text box for SQL commands input
+sql_commands_label = ttk.Label(assessCommandsFrame, text="Enter SQL Commands:")
+sql_commands_text_box = tk.Text(assessCommandsFrame, height=10, width=55, wrap=tk.WORD)
+
+# Button to trigger the assessment
+assess_button = ttk.Button(assessCommandsFrame, text="Assess", command=assess_commands)
+
+# Display box for the assessment result
+display_assessment_result = tk.Text(assessCommandsFrame, height=10, width=55, wrap=tk.WORD)
+
+# Scrollbar for the text box and display box
+sql_commands_scrollbar = ttk.Scrollbar(assessCommandsFrame, command=sql_commands_text_box.yview)
+sql_commands_text_box.config(yscrollcommand=sql_commands_scrollbar.set)
+
+assessment_result_scrollbar = ttk.Scrollbar(assessCommandsFrame, command=display_assessment_result.yview)
+display_assessment_result.config(yscrollcommand=assessment_result_scrollbar.set)
+
+# Layout for Assess SQLite Commands Frame
+sql_commands_label.pack(padx=10, pady=10)
+sql_commands_text_box.pack(padx=10, pady=10)
+sql_commands_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+assess_button.pack(padx=10, pady=10)
+
+display_assessment_result.pack(padx=10, pady=10)
+assessment_result_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+
+# Main loop
 root.mainloop()
