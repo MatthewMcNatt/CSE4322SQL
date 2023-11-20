@@ -2,6 +2,7 @@
 import threading
 import time
 import tkinter as tk
+import openai
 from tkinter import ttk, filedialog
 from NL_SQL_Engine import * 
 from entity import *
@@ -61,44 +62,61 @@ response = None
 ------------------------------------------------------------
 '''
 
-#create an entity
-def add_entity():
-    #extract information from entry boxes
-    entity_name = entity_name_entry.get()
-    entity_description = entity_description_entry.get()
+# Function to clear and update entry widgets
+def clear_entry():
+    # Clear the associated StringVar for each entry
+    entity_name_var.set("")
+    entity_description_var.set("")
+    database_name_var.set("")
 
-    #add the entity to the list as string
+# Function to restart the process
+def restart():
+    # Clear entities and associated StringVars
+    global entities
+    entities = []
+    entity_name_var.set("")
+    entity_description_var.set("")
+    display_entities.delete(1.0, tk.END)
+    display_schema.delete(1.0, tk.END)
+    update_widgets()
+
+# Function to add an entity
+def add_entity():
+    # Extract information from entry boxes
+    entity_name = entity_name_var.get()
+    entity_description = entity_description_var.get()
+
+    # Add the entity to the list as a string
     user_defined_entity = Entity(entity_name, entity_description)
     entities.append(user_defined_entity)
-    
+
     for e in entities:
         print(e.toString() + "\n")
 
-    update_entity_display()
+    # Go through each widget and update the contained content
+    update_widgets()
 
-#empty contents of the list to start over
-def restart():
-    global entities
-    entities = []
-    display_entities.delete(1.0, tk.END)
-    display_schema.delete(1.0, tk.END)
-
-#list all entities in entity display box
-def update_entity_display():
-    # Clear the existing content in the Text widget
-    display_entities.delete(1.0, tk.END)
-
+# Function to update widgets
+def update_widgets():
     # Iterate through entities and insert them into the Text widget
+    display_entities.delete(1.0, tk.END)
     for index, e in enumerate(entities, start=1):
         entity_info = f"{index}. {e.name}\n   {e.description}\n\n"
         display_entities.insert(tk.END, entity_info)
+
+    # Clear out entry boxes
+    entity_name_var.set("")
+    entity_description_var.set("")
+    database_name_var.set("")
+
+
 
 #update display schema to include ChatGPT response
 def update_schema_display():
     # Clear the existing content in the Text widget
     display_schema.delete(1.0, tk.END)
 
-    display_schema.insert(tk.END, response)
+    display_schema.insert(tk.END, CREATE_SCHEMA_RESULTS)
 
 #create schema draft via SQL_Engine
 def generate():
@@ -107,9 +125,8 @@ def generate():
     global DBname
     DBname = database_name_entry.get()
 
-    #generate queries via sql engine
-    global response
-    response = create_schema(entities, DBname)
+    #generate schema via sql engine
+    Loading_task(lambda:create_schema(entities, DBname), CREATE_SCHEMA_ID)
 
     #update display
     update_schema_display()
@@ -120,7 +137,7 @@ def export():
     filename = DBname + ".sql"
     with open(filename, 'w') as file:
         # Print a string to the file
-        print(response, file=file)
+        print(CREATE_SCHEMA_RESULTS, file=file)
 
 #user input database attributes: name & entities
 
@@ -137,10 +154,16 @@ database_name_label = ttk.Label(createSchemaFrame, text="Database Name:")
 entity_display_label = ttk.Label(createSchemaFrame, text="Current Entities:")
 schema_display_label = ttk.Label(createSchemaFrame, text="Current Schema:")
 
-#Entry boxes
-entity_name_entry = ttk.Entry(createSchemaFrame, width=20)
-entity_description_entry = ttk.Entry(createSchemaFrame, width=40)
-database_name_entry = ttk.Entry(createSchemaFrame, width=20)
+# Entry variables
+entity_name_var = tk.StringVar()
+entity_description_var = tk.StringVar()
+database_name_var = tk.StringVar()
+
+# Entry boxes
+entity_name_entry = ttk.Entry(createSchemaFrame, width=20, textvariable=entity_name_var)
+entity_description_entry = ttk.Entry(createSchemaFrame, width=40, textvariable=entity_description_var)
+database_name_entry = ttk.Entry(createSchemaFrame, width=20, textvariable=database_name_var)
+
 
 #Buttons
 add_entity_button = ttk.Button(createSchemaFrame, text="Add new entity", command=add_entity)
@@ -242,7 +265,8 @@ def run_async_task(loading_dialog, progressbar, async_task, ID):
         CREATE_SCHEMA_RESULTS = async_task()
         #add any state changes to UI here for your use case. 
         #If you want things to execute AFTER its stored it must be here. 
-        #FOR EXAMPLE: 
+        #FOR EXAMPLE:
+        update_schema_display() 
         label5.config(text=CREATE_SCHEMA_RESULTS) #updates label 5 in the testing tab
         print(CREATE_SCHEMA_RESULTS)
     if(ID == CREATE_QUERY_ID):
@@ -309,7 +333,6 @@ notebook.add(assessCommandsFrame, text="Assess SQLite Commands")
 ---------ASSESS SQL COMMANDS ~ METHODS & WIDGETS------------
 ------------------------------------------------------------
 '''
-openai.api_key = ""
 def assess_SqlCommands(sql_commands):
     try:
         # Prepare the prompt for ChatGPT input
