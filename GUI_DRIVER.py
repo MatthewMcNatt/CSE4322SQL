@@ -309,7 +309,7 @@ notebook.add(assessCommandsFrame, text="Assess SQLite Commands")
 ---------ASSESS SQL COMMANDS ~ METHODS & WIDGETS------------
 ------------------------------------------------------------
 '''
-openai.api_key = "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"
+openai.api_key = ""
 def assess_SqlCommands(sql_commands):
     try:
         # Prepare the prompt for ChatGPT input
