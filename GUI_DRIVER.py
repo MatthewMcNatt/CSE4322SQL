@@ -98,7 +98,9 @@ def update_schema_display():
     # Clear the existing content in the Text widget
     display_schema.delete(1.0, tk.END)
 
-    display_schema.insert(tk.END, response)
+    #insert schema results: use global CREATE_SCHEMA_RESULTS, 
+    #which interfaces with run_async_task() thread
+    display_schema.insert(tk.END, CREATE_SCHEMA_RESULTS)
 
 #create schema draft via SQL_Engine
 def generate():
@@ -106,13 +108,7 @@ def generate():
     #access/update dbname global variable
     global DBname
     DBname = database_name_entry.get()
-
-    #generate queries via sql engine
-    global response
-    response = create_schema(entities, DBname)
-
-    #update display
-    update_schema_display()
+    Loading_task(lambda:create_schema(entities, DBname), CREATE_SCHEMA_ID)
 
 def export():
     # Open a file in write mode (creates the file if it doesn't exist)
@@ -243,6 +239,7 @@ def run_async_task(loading_dialog, progressbar, async_task, ID):
         #add any state changes to UI here for your use case. 
         #If you want things to execute AFTER its stored it must be here. 
         #FOR EXAMPLE: 
+        update_schema_display()
         label5.config(text=CREATE_SCHEMA_RESULTS) #updates label 5 in the testing tab
         print(CREATE_SCHEMA_RESULTS)
     if(ID == CREATE_QUERY_ID):
