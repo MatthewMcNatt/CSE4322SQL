@@ -86,33 +86,28 @@ It returns a query in RAW SQL format.
 """
 #code for sql engine goes here
 def generate_query(schema, NLQueryDescription):
-    messages = [ {"role": "system", "content":  
-              "You are a natural language model that takes in a set "+
-              "of sqlite commands building the schema of a database "+
-              "as well as a natural language description of a query. "+
-              "Your job is to generate the actual sqlite query. "+ 
-              "If the natural language description of the query does not "+
-              "Match any entitities in the schema provided, respond with "+
-              "\"DATABASE DOES NOT REPRESENT ENTITIES DESCRIBED\""}]
-    prompt = 'Here is the schema: \n'
-    prompt += schema
-    prompt += '\nNow here is the query description: \n'
-    prompt+= NLQueryDescription
-    
-    messages.append( 
-            {"role": "user", "content": prompt}, 
-        )
-    chat = openai.ChatCompletion.create( 
-            model="gpt-3.5-turbo", messages=messages 
-        ) 
-    response = chat.choices[0].message.content 
-     
-    
-    print("\n\nPROMPT\n\n"+prompt+"\n\n")
-    return(response)
+    messages = [
+        {"role": "system", "content":
+            "You are a natural language model that takes in a set " +
+            "of SQLite commands building the schema of a database " +
+            "as well as a natural language description of a query. " +
+            "Your job is to generate the actual SQLite query. " +
+            "If the natural language description of the query does not " +
+            "match any entities in the schema provided, respond with " +
+            "'DATABASE DOES NOT REPRESENT ENTITIES DESCRIBED'."}
+    ]
 
+    prompt = 'Here is the schema: \n' + schema + '\nNow here is the query description: \n' + NLQueryDescription
+    messages.append({"role": "user", "content": prompt})
 
-
+    try:
+        chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+        response = chat.choices[0].message.content
+        # Assuming the response is correct, return it
+        return response.strip()  # .strip() removes any leading/trailing whitespace
+    except openai.error.OpenAIError as e:
+        # Handle API errors here
+        return f"An error occurred: {str(e)}"
 
 
 e1 = entity('nurse', 'An individual with ssn, payrate, start time, endtime and hourly pay at a hospital')

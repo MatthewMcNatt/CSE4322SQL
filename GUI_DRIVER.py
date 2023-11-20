@@ -2,7 +2,7 @@
 import threading
 import time
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 from NL_SQL_Engine import * 
 from entity import *
 
@@ -254,5 +254,51 @@ def run_async_task(loading_dialog, progressbar, async_task, ID):
     # Close the loading dialog when the task is complete
     #label5.config(text=CREATE_SCHEMA_RESULTS)
     root.after(0, stop_progressbar, progressbar, loading_dialog)
+
+def load_schema_file():
+    filename = filedialog.askopenfilename(title="Select a file", filetypes=(("SQL files", "*.sql"), ("all files", "*.*")))
+    if filename:
+        with open(filename, 'r') as file:
+            schema_text_box.delete(1.0, tk.END)
+            schema_text_box.insert(tk.END, file.read())
+
+# Function to generate query from inputs
+def on_generate_query():
+    # Debug print to confirm this function is called
+    print("Generate Query button clicked.")
+
+    schema = schema_text_box.get("1.0", tk.END).strip()
+    query_description = query_description_entry.get().strip()
+
+    # Debug print to check the inputs
+    print(f"Schema:\n{schema}")
+    print(f"Query Description:\n{query_description}")
+
+    try:
+        generated_query = generate_query(schema, query_description)
+        print(f"Generated Query:\n{generated_query}")
+
+        display_generated_query.delete(1.0, tk.END)
+        display_generated_query.insert(tk.END, generated_query)
+    except Exception as e:
+        # If there's an error, print it out or show it in a message box
+        print(f"An error occurred: {e}")
+        messagebox.showerror("Error", f"An error occurred: {e}")
+
+
+# Generate Query Frame Widgets
+schema_text_box = tk.Text(generateQueryFrame, height=10, width=55)
+query_description_entry = ttk.Entry(generateQueryFrame, width=55)
+generate_query_button = ttk.Button(generateQueryFrame, text="Generate Query", command=on_generate_query)
+load_schema_button = ttk.Button(generateQueryFrame, text="Load Schema from File", command=load_schema_file)
+display_generated_query = tk.Text(generateQueryFrame, height=10, width=55)
+
+# Layout for Generate Query Frame
+schema_text_box.pack(padx=10, pady=10)
+load_schema_button.pack(padx=10, pady=10)
+query_description_entry.pack(padx=10, pady=10)
+generate_query_button.pack(padx=10, pady=10)
+display_generated_query.pack(padx=10, pady=10)
+
 
 root.mainloop()
