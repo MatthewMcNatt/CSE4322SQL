@@ -253,9 +253,9 @@ def run_async_task(loading_dialog, progressbar, async_task, ID):
         display_generated_query.insert(tk.END, CREATE_QUERY_RESULTS)
     if(ID == ASSESS_SCHEMA_ID):
         ASSESS_SCHEMA_RESULTS = async_task()
-        #add any state changes to UI here for your use case
+        display_assessment_result.delete(1.0, tk.END)
+        display_assessment_result.insert(tk.END, ASSESS_SCHEMA_RESULTS)
     # Close the loading dialog when the task is complete
-    #label5.config(text=CREATE_SCHEMA_RESULTS)
     root.after(0, stop_progressbar, progressbar, loading_dialog)
 
 def load_schema_file():
@@ -295,7 +295,6 @@ def on_generate_query():
     except Exception as e:
         # If there's an error, print it out or show it in a message box
         print(f"An error occurred: {e}")
-        messagebox.showerror("Error", f"An error occurred: {e}")
 
 
 # Generate Query Frame Widgets
@@ -325,27 +324,6 @@ notebook.add(assessCommandsFrame, text="Assess SQLite Commands")
 ---------ASSESS SQL COMMANDS ~ METHODS & WIDGETS------------
 ------------------------------------------------------------
 '''
-def assess_SqlCommands(sql_commands):
-    try:
-        # Prepare the prompt for ChatGPT input
-        prompt = f"Assess the following SQL commands:\n{sql_commands}"
-
-        # Call the OpenAI GPT-3 API
-        response = openai.Completion.create(
-            model="davinci-002",
-            prompt=prompt,
-            max_tokens=200
-        )
-
-        # Extract the generated text from the API response
-        generated_text = response['choices'][0]['text']
-
-        # Return the generated description
-        return generated_text
-
-    except Exception as e:
-        # Handle API errors
-        return f"An error occurred while assessing the SQL commands: {str(e)}"
     
 def assess_commands():
     # Get the SQL commands from the text box
@@ -354,13 +332,13 @@ def assess_commands():
     # Check if the SQL commands are empty
     if not sql_commands:
         assessment_result = "Please enter valid SQL commands."
+        display_assessment_result.delete(1.0, tk.END)
+        display_assessment_result.insert(tk.END, assessment_result)
     else:
         # Call the assess_SqlCommands function
-        assessment_result = assess_SqlCommands(sql_commands)
+        Loading_task(lambda:assess_SQLCommands(sql_commands), ASSESS_SCHEMA_ID)
 
-    # Update the display with the assessment result
-    display_assessment_result.delete(1.0, tk.END)
-    display_assessment_result.insert(tk.END, assessment_result)
+    
 
 # Label and text box for SQL commands input
 load_schema_button_assess = ttk.Button(assessCommandsFrame, text="Load Commands from File", command=load_SQL_commands)

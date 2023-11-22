@@ -57,14 +57,18 @@ def assess_SQLCommands(input):
     messages = [ {"role": "system", "content":  
                 "You are a natural language model whose purpose "+
                 "is to create understandable, clear and percise messages "+
-                "describing syntax issues with provided SQLite commands "+
+                "describing syntax issues with provided SQL commands "+
                 "since error messages from the interpreter are unclear and "+
-                "unhelpful. If the provided SQLite commands have more than "+
+                "unhelpful. Only mention erros that you are certain will cause syntax erros. If the provided SQL commands have more than "+
                 "three errors, mention only the first three and add the sentance "+
                 "\"There are more errors.\". If the input does not look like "+
-                "SQLite, respond only with \"FAULTY DATA\""}]
-    prompt = 'Here is the sqlite: \n'
+                "SQLite, respond only with \"FAULTY DATA\"."+
+                "Do not return any corrected code. Only return an explanation as to what is wrong."+
+                "Also it is better to miss obscure errors than identify false positives."+
+                "It is also unlikely more than 1 thing is wrong, but it is not certain."}]
+    prompt = 'Here is the SQL: \n'
     prompt += input
+    print(prompt)
     
     messages.append( 
             {"role": "user", "content": prompt}, 
