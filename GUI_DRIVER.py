@@ -107,7 +107,7 @@ def update_widgets():
     # Clear out entry boxes
     entity_name_var.set("")
     entity_description_var.set("")
-    database_name_var.set("")
+    #database_name_var.set("")
 
 
 
@@ -188,30 +188,30 @@ display_schema.config(yscrollcommand=schema_scrollbar.set)
 '''
 
 #Show Labels
-entity_name_label.grid(row=0, column=0, padx=50, pady=0, sticky="w")
-entity_description_label.grid(row=2, column=0, padx=50, pady=0, sticky="w")
-database_name_label.grid(row=6, column=0, padx=50, pady=0, sticky="w")
-entity_display_label.grid(row=0, column=1, padx=5, pady=0, sticky="w")
-schema_display_label.grid(row=0, column=3, padx=5, pady=0, sticky="w")
+entity_name_label.grid(row=1, column=0, padx=10, pady=0, sticky="nw")
+entity_description_label.grid(row=2, column=0, padx=10, pady=0, sticky="nw")
+database_name_label.grid(row=0, column=0, padx=10, pady=20, sticky="nw")
+entity_display_label.grid(row=0, column=2, padx=5, pady=0, sticky="nw")
+schema_display_label.grid(row=0, column=4, padx=5, pady=0, sticky="nw")
 
 #Show Entry Boxes
-entity_name_entry.grid(row=1, column=0, padx=50, pady=0, sticky="w")
-entity_description_entry.grid(row=3, column=0, padx=50, pady=0, sticky="w")
-database_name_entry.grid(row=7, column=0, padx=50, pady=0, sticky="w")
+entity_name_entry.grid(row=1, column=1, padx=5, pady=0, sticky="nw")
+entity_description_entry.grid(row=2, column=1, padx=5, pady=0, sticky="nw")
+database_name_entry.grid(row=0, column=1, padx=5, pady=20, sticky="nw")
 
 #Show Buttons
-add_entity_button.grid(row=4, column=0, padx=50, pady=0, sticky="w")
-restart_button.grid(row=5, column=0, padx=50, pady=0, sticky="w")
-generate_button.grid(row=8, column=0, padx=50, pady=0, sticky="w")
-export_button.grid(row=9, column=0, padx=50, pady=0, sticky="w")
+add_entity_button.grid(row=3, column=0, padx=50, pady=0, sticky="nw")
+restart_button.grid(row=4, column=1, padx=50, pady=0, sticky="nw")
+generate_button.grid(row=3, column=1, padx=50, pady=0, sticky="nw")
+export_button.grid(row=4, column=0, padx=50, pady=0, sticky="nw")
 
 #Display Text Boxes
-display_entities.grid(row=1, column=1, rowspan=11, padx=10, pady=10, sticky="nsew")
-display_schema.grid(row=1, column=3, rowspan=11, padx=10, pady=10, sticky="nsew")
+display_entities.grid(row=1, column=2, rowspan=11, padx=10, pady=10, sticky="nsew")
+display_schema.grid(row=1, column=4, rowspan=11, padx=10, pady=10, sticky="nsew")
 
 #Display Scroll Bars
-entities_scrollbar.grid(row=1, column=2, rowspan=11, pady=10, sticky="ns")
-schema_scrollbar.grid(row=1, column=4, rowspan=11, pady=10, sticky="ns")
+entities_scrollbar.grid(row=1, column=3, rowspan=11, pady=10, sticky="ns")
+schema_scrollbar.grid(row=1, column=5, rowspan=11, pady=10, sticky="ns")
 
 """TODO: add code for the assess schema use case """
 label2 = ttk.Label(assessSchemaFrame, text="ADD GUI ELEMENTS HERE")

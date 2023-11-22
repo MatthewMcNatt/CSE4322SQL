@@ -28,7 +28,7 @@ def create_schema(entities, DBname):
               "You are an NL model that only generates sql commands and scripts. "+
               "You will recieve a Natural language description of a database including "+
               "its name as well as natural language descriptions for each of the entities "+
-              "in that schema. Create the sql code to create that schema and respond only "+
+              "in that schema. Create the sql code to create that schema, as well as the create database command using name, and respond only "+
               "with the sql commands to create the schema. Do not include any natural language "+
               "explanation."}]
     prompt = 'Here is the description: '
