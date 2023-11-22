@@ -32,14 +32,10 @@ notebook = ttk.Notebook(root, style="TNotebook")
 
 # Set up frames and add them to the gui
 createSchemaFrame = ttk.Frame(notebook)
-assessSchemaFrame = ttk.Frame(notebook)
 generateQueryFrame = ttk.Frame(notebook)
-testFrame = ttk.Frame(notebook)
 
 notebook.add(createSchemaFrame, text="Create Schema")
-notebook.add(assessSchemaFrame, text="Assess Schema")
 notebook.add(generateQueryFrame, text="Generate Query")
-notebook.add(testFrame, text="Testing REMOVE LATER")
 
 # Pack the notebook to make it visible
 notebook.pack(fill='both', expand=True)
@@ -213,22 +209,7 @@ display_schema.grid(row=1, column=4, rowspan=11, padx=10, pady=10, sticky="nsew"
 entities_scrollbar.grid(row=1, column=3, rowspan=11, pady=10, sticky="ns")
 schema_scrollbar.grid(row=1, column=5, rowspan=11, pady=10, sticky="ns")
 
-"""TODO: add code for the assess schema use case """
-label2 = ttk.Label(assessSchemaFrame, text="ADD GUI ELEMENTS HERE")
-label2.pack(padx=10, pady=10)
-#assess_schema("test")
 
-
-#EXAMPLE ASYNC
-def on_button_click():
-    Loading_task(lambda:create_schema(entities, 'Hospital DB'), CREATE_SCHEMA_ID)
-
-label4 = ttk.Label(testFrame, text="TESTING")
-label5 = ttk.Label(testFrame, text=CREATE_SCHEMA_RESULTS)
-label4.pack(padx=10, pady=10)
-label5.pack(padx=10, pady=10)
-testASYNCButton = tk.Button(testFrame, text="Click me!", command=on_button_click)
-testASYNCButton.pack(padx=20, pady=20)
 
 """
 The Async loading function
@@ -263,7 +244,6 @@ def run_async_task(loading_dialog, progressbar, async_task, ID):
         #If you want things to execute AFTER its stored it must be here. 
         #FOR EXAMPLE:
         update_schema_display() 
-        label5.config(text=CREATE_SCHEMA_RESULTS) #updates label 5 in the testing tab
         print(CREATE_SCHEMA_RESULTS)
     if(ID == CREATE_QUERY_ID):
         CREATE_QUERY_RESULTS = async_task()
