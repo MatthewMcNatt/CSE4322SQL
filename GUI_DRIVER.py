@@ -265,6 +265,14 @@ def load_schema_file():
             schema_text_box.delete(1.0, tk.END)
             schema_text_box.insert(tk.END, file.read())
 
+def load_SQL_commands():
+    filename = filedialog.askopenfilename(title="Select a file", filetypes=(("SQL files", "*.sql"), ("all files", "*.*")))
+    if filename:
+        with open(filename, 'r') as file:
+            sql_commands_text_box.delete(1.0, tk.END)
+            sql_commands_text_box.insert(tk.END, file.read())
+
+
 # Function to generate query from inputs
 def on_generate_query():
     # Debug print to confirm this function is called
@@ -355,6 +363,7 @@ def assess_commands():
     display_assessment_result.insert(tk.END, assessment_result)
 
 # Label and text box for SQL commands input
+load_schema_button_assess = ttk.Button(assessCommandsFrame, text="Load Commands from File", command=load_SQL_commands)
 sql_commands_label = ttk.Label(assessCommandsFrame, text="Enter SQL Commands:")
 sql_commands_text_box = tk.Text(assessCommandsFrame, height=10, width=55, wrap=tk.WORD)
 
@@ -374,6 +383,7 @@ display_assessment_result.config(yscrollcommand=assessment_result_scrollbar.set)
 # Layout for Assess SQLite Commands Frame
 sql_commands_label.pack(padx=10, pady=10)
 sql_commands_text_box.pack(padx=10, pady=10)
+load_schema_button_assess.pack(padx=10, pady=10)
 sql_commands_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 assess_button.pack(padx=10, pady=10)
