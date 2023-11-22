@@ -218,10 +218,6 @@ label2 = ttk.Label(assessSchemaFrame, text="ADD GUI ELEMENTS HERE")
 label2.pack(padx=10, pady=10)
 #assess_schema("test")
 
-"""TODO: add code for the generate query use case """
-label3 = ttk.Label(generateQueryFrame, text="ADD GUI ELEMENTS HERE")
-label3.pack(padx=10, pady=10)
-#generate_query("test", "test")
 
 #EXAMPLE ASYNC
 def on_button_click():
@@ -311,7 +307,9 @@ def on_generate_query():
 
 
 # Generate Query Frame Widgets
+schema_text_box_label = ttk.Label(generateQueryFrame, text="DATABASE SCHEMA: ")
 schema_text_box = tk.Text(generateQueryFrame, height=10, width=55)
+query_description_label = ttk.Label(generateQueryFrame, text="QUERY DESCRIPTION: ")
 query_description_entry = ttk.Entry(generateQueryFrame, width=55)
 generate_query_button = ttk.Button(generateQueryFrame, text="Generate Query", command=on_generate_query)
 load_schema_button = ttk.Button(generateQueryFrame, text="Load Schema from File", command=load_schema_file)
@@ -319,7 +317,9 @@ display_generated_query = tk.Text(generateQueryFrame, height=10, width=55)
 
 # Layout for Generate Query Frame
 schema_text_box.pack(padx=10, pady=10)
+schema_text_box_label.pack(padx=10, pady=10)
 load_schema_button.pack(padx=10, pady=10)
+query_description_label.pack(padx=10, pady=10)
 query_description_entry.pack(padx=10, pady=10)
 generate_query_button.pack(padx=10, pady=10)
 display_generated_query.pack(padx=10, pady=10)
