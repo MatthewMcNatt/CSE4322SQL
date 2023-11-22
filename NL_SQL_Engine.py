@@ -99,6 +99,7 @@ def generate_query(schema, NLQueryDescription):
 
     prompt = 'Here is the schema: \n' + schema + '\nNow here is the query description: \n' + NLQueryDescription
     messages.append({"role": "user", "content": prompt})
+    print(prompt)
 
     try:
         chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)

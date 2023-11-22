@@ -268,6 +268,9 @@ def run_async_task(loading_dialog, progressbar, async_task, ID):
     if(ID == CREATE_QUERY_ID):
         CREATE_QUERY_RESULTS = async_task()
         #add any state changes to UI here for your use case
+        print(f"Generated Query:\n{CREATE_QUERY_RESULTS}")
+        display_generated_query.delete(1.0, tk.END)
+        display_generated_query.insert(tk.END, CREATE_QUERY_RESULTS)
     if(ID == ASSESS_SCHEMA_ID):
         ASSESS_SCHEMA_RESULTS = async_task()
         #add any state changes to UI here for your use case
@@ -295,11 +298,12 @@ def on_generate_query():
     print(f"Query Description:\n{query_description}")
 
     try:
-        generated_query = generate_query(schema, query_description)
-        print(f"Generated Query:\n{generated_query}")
+        #generated_query = generate_query(schema, query_description)
+        Loading_task(lambda:generate_query(schema, query_description), CREATE_QUERY_ID)
 
-        display_generated_query.delete(1.0, tk.END)
-        display_generated_query.insert(tk.END, generated_query)
+        # print(f"Generated Query:\n{generated_query}")
+        # display_generated_query.delete(1.0, tk.END)
+        # display_generated_query.insert(tk.END, generated_query)
     except Exception as e:
         # If there's an error, print it out or show it in a message box
         print(f"An error occurred: {e}")
